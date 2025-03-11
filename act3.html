@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>SA_3Q_act3</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: black;
+      background-size: cover;
+      background-repeat: no-repeat;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+      transition: background-image 1s ease-in-out, opacity 0.5s ease-in-out;
+    }
+
+    .fade-out {
+      opacity: 0;
+    }
+
+    .fuzzy-bubbles-bold {
+      font-family: "Fuzzy Bubbles", serif;
+      font-weight: 700;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      font-family: "Fuzzy Bubbles", serif;
+      font-weight: 700;
+      font-size: 20px;
+      border: 3px solid black;
+      border-radius: 6px;
+      padding: 10px 20px;
+      color: #ba0406;
+      background-color: #fdc3c3;
+      border-color: #970304;
+      cursor: pointer;
+      transition: background-color 0.35s ease, transform 0.35s ease;
+    }
+
+    button:hover {
+      color: #fdc3c3;
+      background-color: #ba0406;
+      transform: scale(0.95);
+    }
+
+    button:hover {
+      color: #fdc3c3;
+      background-color: #ba0406;
+      transform: scale(0.95);
+    }
+
+    #image {
+      display: none;
+      margin-top: 20px;
+      max-width: 80%;
+      height: auto;
+      border: 5px solid #970304;
+      border-radius: 10px;
+    }
+
+    #text {
+      display: none;
+      font-family: "Fuzzy Bubbles", serif;
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 10px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="navbar">
+    <button onclick="smoothRedirect('more.html')">MORE ⋮</button>
+    <button onclick="window.location.href='start_page.html'">HOME ⌂</button>
+    <button onclick="resetStory()">RESET ↺</button>
+    <button id="nextButton" onclick="nextContent()">NEXT →</button>
+  </div>
+
+  <div id="char_name"></div>
+  <div id="text"></div>
+
+  <script>
+    const content = [
+      { text: "VINCE STARTS FEELING AT UNEASE LATELY..." },
+      { text: "VINCE: Is that... grandma? I thought she was gone!" },
+      { text: "VINCE SEES A DARK FIGURE JUST IN THE CORNER OF THE HOUSE" },
+      { text: "VINCE: Uh guys, can you see those?" },
+      { text: "EVERYONE: Nah. Are you secretly schizophrenic or something?" },
+      { text: "VINCE: Probably? It's starting to drive me insane already" },
+      { text: "VINCE: I think it wants me to open that RIFT." },
+      { text: "MICAI: Now you say it, I feel that 'thing' getting stronger..." },
+      { text: "TONI: This can't be... why did it target VINCE, my only brother?!" },
+      { text: "MICAI: It feeds off our fears, making itself stronger." },
+      { text: "TONI: Wait, so this means all of us have to... " },
+      { text: "POPPY: Get our stuff together and face the enemy, the RIFT." },
+      { text: "MICAI: I can trace the energy linking from VINCE... to the other room in the basement." },
+
+      { text: "TONI: The only place we can stop the RIFT is here, at the basement." },
+      { text: "FAYE: But it's... locked by a 'code'. Come on, we have to solve this ASAP!"},
+      { text: "TONI: Yep! That's why I need all your cooperation for this." },
+      { text: "VINCE: Yeah and... please guys, I really need your help to at least remedy whatever's happening to me!" },
+      { text: "TONI: Hang on VINCE. It'll be a quick one, I promise." },
+    ];
+
+    let currentIndex = -1;
+    let typingTimeout;
+
+    const backgroundMap = {
+      "VINCE STARTS FEELING AT UNEASE LATELY...": "https://i.ibb.co/DHdN6cvF/image.png",
+      "VINCE: Is that... grandma? I thought she was gone!": "https://i.ibb.co/Y77QVRJr/image.png",
+      "VINCE SEES A DARK FIGURE JUST IN THE CORNER OF THE HOUSE": "https://i.ibb.co/My7jpTCM/image.png",
+      "VINCE: Uh guys, can you see those?": "https://i.ibb.co/x8g7g6ZG/image.png",
+      "EVERYONE: No. Are you imagining things?":"https://i.ibb.co/x8g7g6ZG/image.png",
+      "VINCE: Probably? It's starting to drive me insane already": "https://i.ibb.co/x8g7g6ZG/image.png",
+      "VINCE: I think it wants me to open that RIFT.": "https://i.ibb.co/S7mrcCH5/image.png",
+      "MICAI: Now you say it, I feel that 'thing' getting stronger...": "",
+      "TONI: This can't be... why did it target VINCE, my only brother?!": "https://i.ibb.co/x8g7g6ZG/image.png",
+      "MICAI: It feeds off our fears, making itself stronger.": "https://i.ibb.co/x8g7g6ZG/image.png",
+      "TONI: Wait, so this means all of us have to... ": "https://i.ibb.co/x8g7g6ZG/image.png",
+      "POPPY: Get our stuff together and face the enemy, the RIFT.": "https://i.ibb.co/x8g7g6ZG/image.png",
+      "MICAI: I can trace the energy linking from VINCE... to the other room in the basement.": "https://i.ibb.co/x8g7g6ZG/image.png",
+      "TONI: The only place we can stop the RIFT is here, at the basement.": "https://i.ibb.co/jP8MtFmn/image.png",
+      "FAYE: But it's... locked by a code. Come on, we'll solve this together!": "https://i.ibb.co/jP8MtFmn/image.png",
+      "TONI: Yep! That's why I need all your cooperation for this.": "https://i.ibb.co/jP8MtFmn/image.png",
+      "VINCE: Yeah and... please guys, I really need your help to end this ASAP!": "https://i.ibb.co/jP8MtFmn/image.png",
+      "TONI: Hang on VINCE. It'll be a quick one, I promise.": "https://i.ibb.co/jP8MtFmn/image.png",
+    };
+
+    function nextContent() {
+      if (typingTimeout) clearTimeout(typingTimeout);
+
+      currentIndex++;
+
+      if (currentIndex >= content.length) return;
+
+      let textElement = document.getElementById("text");
+      let nextButton = document.getElementById("nextButton");
+      let bodyElement = document.body;
+
+      textElement.style.display = "block";
+      typeText(textElement, content[currentIndex].text);
+
+      if (backgroundMap[content[currentIndex].text]) {
+        bodyElement.style.backgroundImage = `url('${backgroundMap[content[currentIndex].text]}')`;
+      }
+      bodyElement.style.backgroundSize = "cover";
+
+      if (currentIndex === content.length - 1) {
+        nextButton.textContent = "Proceed";
+        nextButton.setAttribute("onclick", "proceedToAct3()");
+      }
+    }
+
+    function typeText(element, text) {
+      element.innerHTML = "";
+      let i = 0;
+
+      function type() {
+        if (i < text.length) {
+          element.innerHTML += text.charAt(i);
+          i++;
+          typingTimeout = setTimeout(type, 30);
+        }
+      }
+      type();
+    }
+
+    function resetStory() {
+      if (typingTimeout) clearTimeout(typingTimeout);
+      currentIndex = -1;
+      let textElement = document.getElementById("text");
+      textElement.style.display = "none";
+      textElement.innerHTML = "";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.style.opacity = "1";
+    });
+
+    function smoothRedirect(url) {
+      document.body.classList.add("fade-out");
+      setTimeout(() => {
+        window.location.href = url;
+      }, 800);
+    }
+
+    function proceedToAct3() {
+      smoothRedirect('act3_game.html');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>SA_3Q_act1</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: black;
+      background-size: cover;
+      background-repeat: no-repeat;
+      text-align: center;
+      transition: background-image 1s ease-in-out, opacity 0.5s ease-in-out;
+    }
+
+    .fade-out {
+      opacity: 0;
+    }
+
+    .fuzzy-bubbles-bold {
+      font-family: "Fuzzy Bubbles", serif;
+      font-weight: 700;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      font-family: "Fuzzy Bubbles", serif;
+      font-weight: 700;
+      font-size: 20px;
+      border: 3px solid black;
+      border-radius: 6px;
+      padding: 10px 20px;
+      color: #ba0406;
+      background-color: #fdc3c3;
+      border-color: #970304;
+      cursor: pointer;
+      transition: background-color 0.35s ease, transform 0.35s ease;
+    }
+
+    button:hover {
+      color: #fdc3c3;
+      background-color: #ba0406;
+      transform: scale(0.95);
+    }
+
+    #image {
+      display: none;
+      margin-top: 20px;
+      max-width: 80%;
+      height: auto;
+      border: 5px solid #970304;
+      border-radius: 10px;
+    }
+
+    #text {
+      display: none;
+      font-family: "Fuzzy Bubbles", serif;
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 10px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="navbar">
+    <button onclick="smoothRedirect('more.html')">MORE ⋮</button>
+    <button onclick="window.location.href='start_page.html'">HOME ⌂</button>
+    <button onclick="resetStory()">RESET ↺</button>
+    <button id="nextButton" onclick="nextContent()">NEXT →</button>
+  </div>
+
+  <div id="text"></div>
+
+  <script>
+    let content = [
+      { text: "TONI AND HER BROTHER VINCE ARE ALL BY THEMSELVES..." },
+      { text: "...AFTER THEY LOST THEIR PARENTS TO A FATAL CAR CRASH..." },
+      { text: "UNABLE TO STAY IN THEIR HOUSE..." },
+      { text: "THEY MOVED TO THEIR GRANDMOTHER'S HOUSE. NO ONE HAS BEEN HERE FOR A LONG TIME." },
+      { text: "WHAT COULD POSSIBLY BE IN THERE?." },
+      { text: "NOW" },
+      { text: "TONI: Hey VINCE, this house is all we have left after all, right? Where is Grandma?" },
+      { text: "VINCE: I don't know. No one told us where she went. This place looks like..." },
+      { text: "TONI: ...she'd never been here for a time. I think something happened to Grandma." },
+      { text: "TONI: Let's explore more. Something is making me feel uneasy here, but we'll go. Just don't go touching too much stuff." },
+      { text: "VINCE: Sis, look at the clocks. Notice how they're all stopped at exactly THREE O'CLOCK? What a coincidence!" },
+      { text: "TONI: Well, seems like a curse is haunting this place. Those clocks..." },
+      { text: "SOMETHING INVISIBLE WHISPERS BESIDE TONI" },
+      { text: "TONI: Vince, did you say anything or is it just the house?" },
+      { text: "VINCE: Didn't say anything, you're probably imagining it." },
+      { text: "THEY SETTLE FOR A WHILE" },
+      { text: "TONI: It's telling me to go to the attic." },
+      { text: "VINCE: I'll join you." },
+      { text: "THEY GO TO THE ATTIC." },
+
+      { text: "TONI: VINCE, go call the gang. We need them to uncover what's happening here." },
+      { text: "VINCE: One second. Cellular coverage here is bad. Good thing Grandma left this telephone still functional." },
+      { text: "NEXT DAY: THEIR FRIENDS FAYE, POPPY, AND MICAI ARRIVE." },
+      { text: "FAYE: Hello TONI! We're all here to help you! No mystery in the house can ever stay covered with me here!" },
+      { text: "POPPY: VINCE, nice to meet you again! I'll help you expose this 'Rift' is, that the government is trying to hide!" },
+      { text: "VINCE: POPPY, the government's all nothing but promises, let alone they get here. Only very supernatural stuff." },
+      { text: "MICAI: Nice to meet you again, TONI! Since I know where and what that 'Rift' is, I'll guide all of us along." },
+      { text: "TONI: I'm really grateful for all you guys here. Anyway, let's go uncover that Rift and the secrets." },
+      { text: "VINCE: And here we go, bringing the friend group in investigating our family's shenanigans." },
+    ];
+
+    let currentIndex = -1;
+    let typingTimeout;
+
+    const backgroundMap = {
+      "TONI AND HER BROTHER VINCE ARE ALL BY THEMSELVES...": "https://i.ibb.co/c7sspy6/image.png",
+      "...AFTER THEY LOST THEIR PARENTS TO A FATAL CAR CRASH...": "https://i.ibb.co/CsmtLbBc/image.png",
+      "UNABLE TO STAY IN THEIR HOUSE...": "https://i.ibb.co/tw3JK5NW/image.png",
+      "THEY MOVED TO THEIR GRANDMOTHER'S HOUSE. NO ONE HAS BEEN HERE FOR A LONG TIME.": "https://i.ibb.co/RkH5QDRs/image.png",
+      "WHAT COULD POSSIBLY BE IN THERE?.": "https://i.ibb.co/WWMLYJmT/image.png",
+      "NOW": "https://i.ibb.co/GN5rpLQ/image.png",
+      "TONI: Hey VINCE, this house is all we have left after all, right? Where is Grandma?": "https://i.ibb.co/GN5rpLQ/image.png",
+      "VINCE: I don't know. No one told us where she went. This place looks like...": "https://i.ibb.co/GN5rpLQ/image.png",
+      "TONI: ...she'd never been here for a time. I think something happened to Grandma.": "https://i.ibb.co/nM5fC6nK/image.png",
+      "TONI: Let's explore more. Something is making me feel uneasy here, but we'll go. Just don't go touching too much stuff.": "https://i.ibb.co/nM5fC6nK/image.png",
+      "VINCE: Sis, look at the clocks. Notice how they're all stopped at exactly THREE O'CLOCK? What a coincidence!": "https://i.ibb.co/KzhzCtrm/image.png",
+      "TONI: Well, seems like a curse is haunting this place. Those clocks...": "https://i.ibb.co/KzhzCtrm/image.png",
+      "SOMETHING INVISIBLE WHISPERS BESIDE TONI": "https://i.ibb.co/KzhzCtrm/image.png",
+      "TONI: Vince, did you say anything or is it just the house?": "https://i.ibb.co/KzhzCtrm/image.png",
+      "VINCE: Didn't say anything, you're probably imagining it.": "https://i.ibb.co/KzhzCtrm/image.png",
+      "THEY SETTLE FOR A WHILE": "https://i.ibb.co/KzhzCtrm/image.png",
+      "TONI: It's telling me to go to the attic.": "https://i.ibb.co/KzhzCtrm/image.png",
+      "VINCE: I'll join you.": "https://i.ibb.co/KzhzCtrm/image.png",
+      "THEY GO TO THE ATTIC.": "https://i.ibb.co/KzhzCtrm/image.png",
+      "TONI: VINCE, go call the gang. We need them to uncover what's happening here.": "https://i.ibb.co/KzhzCtrm/image.png",
+      "VINCE: One second. Cellular coverage here is bad. Good thing Grandma left this telephone still functional.": "https://i.ibb.co/jZM3HxJv/image.png",
+      "NEXT DAY: THEIR FRIENDS FAYE, POPPY, AND MICAI ARRIVE.": "https://i.ibb.co/zh4XbRsZ/image.png",
+      "FAYE: Hello TONI! We're all here to help you! No mystery in the house can ever stay covered with me here!": "https://i.ibb.co/JWsFqCnw/image.png",
+      "POPPY: VINCE, nice to meet you again! I'll help you expose this 'Rift' is, that the government is trying to hide!": "https://i.ibb.co/v4SxJjfr/image.png",
+      "VINCE: POPPY, the government's all nothing but promises, let alone they get here. Only very supernatural stuff.": "https://i.ibb.co/v4SxJjfr/image.png",
+      "MICAI: Nice to meet you again, TONI! Since I know where and what that 'Rift' is, I'll guide all of us along.": "https://i.ibb.co/spYHgJB6/image.png",
+      "TONI: I'm really grateful for all you guys here. Anyway, let's go uncover that Rift and the secrets.": "https://i.ibb.co/k2nYxKRj/image.png",
+      "VINCE: And here we go, bringing the friend group in investigating our family's shenanigans.": "https://i.ibb.co/k2nYxKRj/image.png",
+    };
+
+    function getReturnIndex() {
+      return content.findIndex(c => c.text === "TONI: VINCE, go call the gang. We need them to uncover what's happening here.");
+    }
+
+    function loadProgress() {
+      let savedIndex = localStorage.getItem("storyProgress");
+      if (savedIndex !== null) {
+        currentIndex = parseInt(savedIndex, 10) - 1; 
+      } else {
+        currentIndex = -1; 
+      }
+      nextContent();
+    }
+
+    function goToAct1Game() {
+      localStorage.setItem("storyProgress", getReturnIndex()); 
+      window.location.href = 'act1_game.html';
+    }
+
+    function proceedToAct2() {
+      window.location.href = 'act2.html';
+    }
+
+    function nextContent() {
+      if (typingTimeout) clearTimeout(typingTimeout);
+
+      currentIndex++;
+
+      if (currentIndex >= content.length) return;
+
+      let textElement = document.getElementById("text");
+      let nextButton = document.getElementById("nextButton");
+      let bodyElement = document.body;
+
+      textElement.style.display = "block";
+      typeText(textElement, content[currentIndex].text);
+
+      if (backgroundMap[content[currentIndex].text]) {
+        bodyElement.style.backgroundImage = `url('${backgroundMap[content[currentIndex].text]}')`;
+      } else {
+        bodyElement.style.backgroundImage = "none";
+      }
+      bodyElement.style.backgroundSize = "cover";
+
+      if (content[currentIndex].text === "THEY GO TO THE ATTIC.") {
+        nextButton.textContent = "Next →";
+        nextButton.setAttribute("onclick", "goToAct1Game()");
+      } else if (currentIndex === content.length - 1) {
+        nextButton.textContent = "Proceed";
+        nextButton.setAttribute("onclick", "proceedToAct2()");
+      } else {
+        nextButton.textContent = "Next →";
+        nextButton.setAttribute("onclick", "nextContent()");
+      }
+    }
+
+    function typeText(element, text) {
+      element.innerHTML = "";
+      let i = 0;
+      function type() {
+        if (i < text.length) {
+          element.innerHTML += text.charAt(i);
+          i++;
+          typingTimeout = setTimeout(type, 25);
+        }
+      }
+      type();
+    }
+
+    function resetStory() {
+      if (typingTimeout) clearTimeout(typingTimeout);
+      localStorage.removeItem("storyProgress");
+      currentIndex = -1;
+      document.getElementById("text").style.display = "none";
+      document.getElementById("text").innerHTML = "";
+      document.body.style.backgroundImage = "none";
+      document.body.style.backgroundColor = "black";
+      document.getElementById("nextButton").disabled = false;
+      document.getElementById("nextButton").textContent = "Next →";
+      document.getElementById("nextButton").setAttribute("onclick", "nextContent()");
+    }
+
+    document.addEventListener("DOMContentLoaded", loadProgress);
+</script>
+
+</body>
+</html>
